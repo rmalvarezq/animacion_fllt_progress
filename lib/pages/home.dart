@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage>
           ),
           DataBackupCloudPage(
             progressAnimation: _progressAnimation,
+            cloudOutAnimation: _cloudOutAnimation,
           )
         ],
       ),
