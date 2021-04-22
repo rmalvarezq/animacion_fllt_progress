@@ -9,6 +9,13 @@ enum DataBackupState {
 }
 
 class DataBackupInitialPage extends StatefulWidget {
+  final VoidCallback onAnimationStarted;
+  final Animation<double> progressAnimation;
+
+  const DataBackupInitialPage(
+      {Key key, this.onAnimationStarted, this.progressAnimation})
+      : super(key: key);
+
   @override
   _DataBackupInitialPageState createState() => _DataBackupInitialPageState();
 }
@@ -62,7 +69,7 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
                         child: FittedBox(
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
-                            child: Text('6%'),
+                            child: ProgressCounter(widget.progressAnimation),
                           ),
                         ),
                       )
@@ -119,29 +126,31 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
                     ? SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                // Colors.black
-                                mainDataBackupColor,
-                              ),
-                              shape: MaterialStateProperty.all<OutlinedBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              // Colors.black
+                              mainDataBackupColor,
+                            ),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _currentState = DataBackupState.start;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text(
-                                'Created Backup',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentState = DataBackupState.start;
+                            });
+                            widget.onAnimationStarted();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(
+                              'Created Backup',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
                       )
                     : OutlinedButton(
                         child: Padding(
@@ -169,13 +178,16 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
     ));
   }
 }
-class ProgressCounter extends StatelessWidget {
-  const ProgressCounter({Key key}) : super(key: key);
+
+class ProgressCounter extends AnimatedWidget {
+  
+  ProgressCounter(Animation<double> animation) : super(listenable: animation);
+  double get value => (listenable as Animation).value;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // child: child,
+    return Text(
+      '${(value * 100).truncate().toString()}%',
     );
   }
 }
