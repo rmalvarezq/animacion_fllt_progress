@@ -21,6 +21,8 @@ class _Bubble {
 class DataBackupCloudPage extends StatelessWidget {
   final Animation<double> progressAnimation;
   final Animation<double> cloudOutAnimation;
+  final Animation<double> bubblesAnimation;
+  
   final bubbles = List<_Bubble>.generate(500, (index) {
     final size = math.Random().nextInt(20) + 5.0;
     final speed = math.Random().nextInt(50) + 1.0;
@@ -37,8 +39,12 @@ class DataBackupCloudPage extends StatelessWidget {
         initialPosition: index * 10.0);
   });
 
-  DataBackupCloudPage({Key key, this.progressAnimation, this.cloudOutAnimation})
-      : super(key: key);
+  DataBackupCloudPage({
+    Key key,
+    this.progressAnimation,
+    this.cloudOutAnimation,
+    this.bubblesAnimation,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -111,11 +117,10 @@ class DataBackupCloudPage extends StatelessWidget {
                   width: circleSize,
                   bottom: 0,
                   left: centerMargin / 2,
-
                   child: ClipOval(
                     child: CustomPaint(
                       foregroundPainter:
-                          _CloudBubblePainter(progressAnimation, bubbles),
+                          _CloudBubblePainter(bubblesAnimation, bubbles),
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -144,7 +149,7 @@ class _CloudBubblePainter extends CustomPainter {
     for (_Bubble _bubble in bubbles) {
       final offset = Offset(
         size.width / 2 + _bubble.direction * animation.value,
-        size.height*1.2 * (1 - animation.value) -
+        size.height * 1.2 * (1 - animation.value) -
             _bubble.speed * animation.value +
             _bubble.initialPosition * (1 - animation.value),
       );
